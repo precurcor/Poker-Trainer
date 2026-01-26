@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poker Trainer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <img src="Images/poker-logo.svg" alt="Poker Trainer logo" />
+      <div>
+        <h1>Poker Trainer</h1>
+        <p>Practice decision-making, read opponents, and sharpen your betting strategy.</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel" id="auth-panel">
+      <h2>Profile (optional)</h2>
+      <p class="muted">
+        Sign in to save your bankroll in this browser. Usernames/passwords are stored locally on this device only.
+      </p>
+      <div class="auth-grid">
+        <label>
+          Username
+          <input type="text" id="username" placeholder="cardshark" />
+        </label>
+        <label>
+          Password
+          <input type="password" id="password" placeholder="simple password" />
+        </label>
+        <div class="auth-actions">
+          <button id="sign-in">Sign in / Create</button>
+          <button id="sign-out" class="secondary" disabled>Sign out</button>
+        </div>
+      </div>
+      <div class="auth-status" id="auth-status">Playing as guest.</div>
+    </section>
+
+    <section class="panel" id="settings-panel">
+      <h2>Table Settings</h2>
+      <div class="settings-grid">
+        <label>
+          Opponents
+          <select id="opponent-count">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="assist-toggle" />
+          <span>Training assistance</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="show-folded" />
+          <span>Reveal folded hands</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="fast-forward" checked />
+          <span>Fast-forward after fold</span>
+        </label>
+        <label>
+          Starting bankroll
+          <input type="number" id="starting-bankroll" min="200" value="1000" />
+        </label>
+        <button id="new-table" class="secondary">New table</button>
+      </div>
+    </section>
+
+    <section class="table">
+      <div class="table-header">
+        <div>
+          <h2>Hand <span id="hand-number">1</span></h2>
+          <div class="pot">Pot: <span id="pot-value">0</span></div>
+        </div>
+        <div class="status" id="hand-status">Waiting for first deal.</div>
+      </div>
+
+      <div class="community" id="community-cards"></div>
+
+      <div class="players" id="players"></div>
+
+      <div class="player-area" id="player-area">
+        <div class="player-info">
+          <div>
+            <h3>You</h3>
+            <div class="chips">Chips: <span id="player-chips">0</span></div>
+          </div>
+          <div class="betting">Current bet: <span id="player-bet">0</span></div>
+        </div>
+        <div class="hand" id="player-hand"></div>
+      </div>
+
+      <div class="actions" id="actions">
+        <button id="fold">Fold</button>
+        <button id="check-call">Check</button>
+        <div class="raise-control">
+          <input type="number" id="raise-amount" min="0" />
+          <button id="raise">Raise</button>
+        </div>
+        <div class="quick-bets">
+          <button data-bet="half">Half pot</button>
+          <button data-bet="pot">Pot</button>
+          <button data-bet="allin">All in</button>
+        </div>
+        <button id="continue-hand" class="secondary" hidden>Continue hand</button>
+        <button id="next-hand" class="secondary" hidden>Next hand</button>
+      </div>
+    </section>
+
+    <section class="panel" id="assist-panel" hidden>
+      <h2>Trainer Insights</h2>
+      <div class="assist-grid">
+        <div>
+          <h3>Hand strength</h3>
+          <p id="hand-strength">---</p>
+          <p id="hand-advice" class="highlight"></p>
+        </div>
+        <div>
+          <h3>Opponents &amp; tells</h3>
+          <ul id="opponent-tells"></ul>
+        </div>
+        <div>
+          <h3>Betting guidance</h3>
+          <p id="betting-guidance">---</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="log-panel">
+      <h2>Hand Log</h2>
+      <div id="log" class="log"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
