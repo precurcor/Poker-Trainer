@@ -3,6 +3,42 @@
   font-family: "Inter", "Segoe UI", sans-serif;
   background: #0b1512;
   color: #f5f5f5;
+  --bg: #0b1512;
+  --bg-contrast: #1a3b2f;
+  --panel: rgba(17, 28, 24, 0.9);
+  --panel-strong: rgba(7, 14, 12, 0.9);
+  --table: linear-gradient(135deg, rgba(15, 65, 48, 0.9), rgba(8, 24, 20, 0.9));
+  --text: #f5f5f5;
+  --muted: rgba(255, 255, 255, 0.7);
+  --accent: #38b87c;
+  --accent-contrast: #0b1512;
+  --highlight: #f7d788;
+  --border: rgba(255, 255, 255, 0.1);
+  --card-back: repeating-linear-gradient(45deg, #243c34, #243c34 8px, #1a2f29 8px, #1a2f29 16px);
+}
+
+body[data-theme="midnight"] {
+  --bg: #0d1117;
+  --bg-contrast: #1c2433;
+  --panel: rgba(18, 22, 32, 0.95);
+  --panel-strong: rgba(11, 15, 22, 0.95);
+  --table: linear-gradient(135deg, rgba(20, 29, 45, 0.95), rgba(8, 12, 20, 0.95));
+  --accent: #6fa8ff;
+  --accent-contrast: #0d1117;
+  --highlight: #ffd166;
+  --card-back: repeating-linear-gradient(45deg, #273049, #273049 8px, #1a2035 8px, #1a2035 16px);
+}
+
+body[data-theme="crimson"] {
+  --bg: #15090b;
+  --bg-contrast: #3b1418;
+  --panel: rgba(28, 16, 18, 0.95);
+  --panel-strong: rgba(18, 9, 10, 0.95);
+  --table: linear-gradient(135deg, rgba(75, 24, 30, 0.92), rgba(20, 9, 12, 0.95));
+  --accent: #f36a6a;
+  --accent-contrast: #1a0b0c;
+  --highlight: #ffd1a6;
+  --card-back: repeating-linear-gradient(45deg, #3b1f24, #3b1f24 8px, #2a1418 8px, #2a1418 16px);
 }
 
 * {
@@ -12,13 +48,14 @@
 body {
   margin: 0;
   padding: 0;
-  background: radial-gradient(circle at top, #1a3b2f 0%, #0b1512 60%);
+  background: radial-gradient(circle at top, var(--bg-contrast) 0%, var(--bg) 60%);
+  color: var(--text);
 }
 
 .site-header {
   padding: 24px 6vw;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(7, 14, 12, 0.9);
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-strong);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -47,14 +84,14 @@ h1, h2, h3 {
 }
 
 .panel {
-  background: rgba(17, 28, 24, 0.9);
+  background: var(--panel);
   padding: 20px;
   border-radius: 16px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 
 .muted {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--muted);
 }
 
 .auth-grid,
@@ -78,22 +115,22 @@ select {
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(0, 0, 0, 0.3);
-  color: #fff;
+  color: var(--text);
 }
 
 button {
   padding: 10px 16px;
   border-radius: 999px;
   border: none;
-  background: #38b87c;
-  color: #0b1512;
+  background: var(--accent);
+  color: var(--accent-contrast);
   font-weight: 600;
   cursor: pointer;
 }
 
 button.secondary {
   background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--text);
 }
 
 button:disabled {
@@ -113,7 +150,7 @@ button:disabled {
 }
 
 .table {
-  background: linear-gradient(135deg, rgba(15, 65, 48, 0.9), rgba(8, 24, 20, 0.9));
+  background: var(--table);
   border-radius: 24px;
   padding: 24px;
   display: flex;
@@ -136,6 +173,11 @@ button:disabled {
 .status {
   color: #b7f1d4;
   font-size: 0.95rem;
+}
+
+.street-label {
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .community,
@@ -164,7 +206,7 @@ button:disabled {
 }
 
 .card.back {
-  background: repeating-linear-gradient(45deg, #243c34, #243c34 8px, #1a2f29 8px, #1a2f29 16px);
+  background: var(--card-back);
   color: rgba(255, 255, 255, 0.6);
 }
 
@@ -178,10 +220,21 @@ button:disabled {
   background: rgba(0, 0, 0, 0.35);
   padding: 12px;
   border-radius: 12px;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .player.folded {
   opacity: 0.6;
+}
+
+.player.folded .card {
+  transform: translateY(6px) scale(0.96);
+}
+
+.player.is-active {
+  box-shadow: 0 0 0 2px var(--accent), 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
 }
 
 .player-name {
@@ -191,7 +244,29 @@ button:disabled {
 
 .player-meta {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.player-position {
+  font-size: 0.8rem;
+  color: var(--highlight);
+}
+
+.action-indicator {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 1.1rem;
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.action-indicator.show {
+  animation: pop 0.45s ease;
+  opacity: 1;
 }
 
 .player-area {
@@ -206,6 +281,15 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.player-area.is-active {
+  box-shadow: 0 0 0 2px var(--accent), 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.player-action {
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .actions {
@@ -246,7 +330,7 @@ button:disabled {
 
 .highlight {
   font-weight: 600;
-  color: #f7d788;
+  color: var(--highlight);
 }
 
 .assist-grid {
@@ -259,6 +343,105 @@ button:disabled {
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  border: 1px solid transparent;
+}
+
+.tab-button.is-active {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.tab-panel {
+  display: none;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tab-panel.is-active {
+  display: flex;
+}
+
+.tips-list {
+  display: grid;
+  gap: 8px;
+  padding-left: 18px;
+}
+
+.learn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.learn-card {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 16px;
+  border-radius: 14px;
+}
+
+.hand-ranking-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.hand-rank {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.hand-chart {
+  display: grid;
+  gap: 10px;
+}
+
+.chart-row {
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.chart-row.premium {
+  background: rgba(247, 215, 136, 0.3);
+}
+
+.chart-row.strong {
+  background: rgba(124, 216, 178, 0.2);
+}
+
+.chart-row.playable {
+  background: rgba(103, 186, 255, 0.2);
+}
+
+.chart-row.speculative {
+  background: rgba(255, 165, 165, 0.2);
+}
+
+@keyframes pop {
+  0% {
+    transform: translateY(-4px) scale(0.85);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(0) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 700px) {

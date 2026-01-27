@@ -18,128 +18,260 @@
   </header>
 
   <main>
-    <section class="panel" id="auth-panel">
-      <h2>Profile (optional)</h2>
-      <p class="muted">
-        Sign in to save your bankroll in this browser. Usernames/passwords are stored locally on this device only.
-      </p>
-      <div class="auth-grid">
-        <label>
-          Username
-          <input type="text" id="username" placeholder="cardshark" />
-        </label>
-        <label>
-          Password
-          <input type="password" id="password" placeholder="simple password" />
-        </label>
-        <div class="auth-actions">
-          <button id="sign-in">Sign in / Create</button>
-          <button id="sign-out" class="secondary" disabled>Sign out</button>
-        </div>
-      </div>
-      <div class="auth-status" id="auth-status">Playing as guest.</div>
-    </section>
+    <nav class="tabs" aria-label="Primary">
+      <button class="tab-button is-active" data-tab="play">Play</button>
+      <button class="tab-button" data-tab="settings">Settings</button>
+      <button class="tab-button" data-tab="learn">Learn</button>
+    </nav>
 
-    <section class="panel" id="settings-panel">
-      <h2>Table Settings</h2>
-      <div class="settings-grid">
-        <label>
-          Opponents
-          <select id="opponent-count">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-          </select>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="assist-toggle" />
-          <span>Training assistance</span>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="show-folded" />
-          <span>Reveal folded hands</span>
-        </label>
-        <label class="toggle">
-          <input type="checkbox" id="fast-forward" checked />
-          <span>Fast-forward after fold</span>
-        </label>
-        <label>
-          Starting bankroll
-          <input type="number" id="starting-bankroll" min="200" value="1000" />
-        </label>
-        <button id="new-table" class="secondary">New table</button>
-      </div>
-    </section>
-
-    <section class="table">
-      <div class="table-header">
-        <div>
-          <h2>Hand <span id="hand-number">1</span></h2>
-          <div class="pot">Pot: <span id="pot-value">0</span></div>
-        </div>
-        <div class="status" id="hand-status">Waiting for first deal.</div>
-      </div>
-
-      <div class="community" id="community-cards"></div>
-
-      <div class="players" id="players"></div>
-
-      <div class="player-area" id="player-area">
-        <div class="player-info">
+    <section class="tab-panel is-active" data-tab-panel="play">
+      <section class="table">
+        <div class="table-header">
           <div>
-            <h3>You</h3>
-            <div class="chips">Chips: <span id="player-chips">0</span></div>
+            <h2>Hand <span id="hand-number">1</span></h2>
+            <div class="pot">Pot: <span id="pot-value">0</span></div>
           </div>
-          <div class="betting">Current bet: <span id="player-bet">0</span></div>
+          <div>
+            <div class="status" id="hand-status">Waiting for first deal.</div>
+            <div class="street-label" id="street-label">Pre-flop</div>
+          </div>
         </div>
-        <div class="hand" id="player-hand"></div>
-      </div>
 
-      <div class="actions" id="actions">
-        <button id="fold">Fold</button>
-        <button id="check-call">Check</button>
-        <div class="raise-control">
-          <input type="number" id="raise-amount" min="0" />
-          <button id="raise">Raise</button>
+        <div class="community" id="community-cards"></div>
+
+        <div class="players" id="players"></div>
+
+        <div class="player-area" id="player-area">
+          <div class="player-info">
+            <div>
+              <h3>You</h3>
+              <div class="chips">Chips: <span id="player-chips">0</span></div>
+              <div class="player-position" id="player-position">Button</div>
+            </div>
+            <div class="betting">Current bet: <span id="player-bet">0</span></div>
+          </div>
+          <div class="hand" id="player-hand"></div>
+          <div class="player-action" id="player-action">Awaiting action</div>
         </div>
-        <div class="quick-bets">
-          <button data-bet="half">Half pot</button>
-          <button data-bet="pot">Pot</button>
-          <button data-bet="allin">All in</button>
+
+        <div class="actions" id="actions">
+          <button id="fold">Fold</button>
+          <button id="check-call">Check</button>
+          <div class="raise-control">
+            <input type="number" id="raise-amount" min="0" />
+            <button id="raise">Raise</button>
+          </div>
+          <div class="quick-bets">
+            <button data-bet="half">Half pot</button>
+            <button data-bet="pot">Pot</button>
+            <button data-bet="allin">All in</button>
+          </div>
+          <button id="continue-hand" class="secondary" hidden>Continue hand</button>
+          <button id="next-hand" class="secondary" hidden>Next hand</button>
         </div>
-        <button id="continue-hand" class="secondary" hidden>Continue hand</button>
-        <button id="next-hand" class="secondary" hidden>Next hand</button>
-      </div>
+      </section>
+
+      <section class="panel" id="assist-panel" hidden>
+        <h2>Trainer Insights</h2>
+        <div class="assist-grid">
+          <div>
+            <h3>Hand strength</h3>
+            <p id="hand-strength">---</p>
+            <p id="hand-advice" class="highlight"></p>
+          </div>
+          <div>
+            <h3>Opponents &amp; tells</h3>
+            <ul id="opponent-tells"></ul>
+          </div>
+          <div>
+            <h3>Betting guidance</h3>
+            <p id="betting-guidance">---</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="log-panel">
+        <h2>Hand Log</h2>
+        <div id="log" class="log"></div>
+      </section>
     </section>
 
-    <section class="panel" id="assist-panel" hidden>
-      <h2>Trainer Insights</h2>
-      <div class="assist-grid">
-        <div>
-          <h3>Hand strength</h3>
-          <p id="hand-strength">---</p>
-          <p id="hand-advice" class="highlight"></p>
+    <section class="tab-panel" data-tab-panel="settings">
+      <section class="panel" id="auth-panel">
+        <h2>Profile (optional)</h2>
+        <p class="muted">
+          Sign in to save your bankroll in this browser. Usernames/passwords are stored locally on this device only.
+        </p>
+        <div class="auth-grid">
+          <label>
+            Username
+            <input type="text" id="username" placeholder="cardshark" />
+          </label>
+          <label>
+            Password
+            <input type="password" id="password" placeholder="simple password" />
+          </label>
+          <div class="auth-actions">
+            <button id="sign-in">Sign in / Create</button>
+            <button id="sign-out" class="secondary" disabled>Sign out</button>
+          </div>
         </div>
-        <div>
-          <h3>Opponents &amp; tells</h3>
-          <ul id="opponent-tells"></ul>
+        <div class="auth-status" id="auth-status">Playing as guest.</div>
+      </section>
+
+      <section class="panel" id="settings-panel">
+        <h2>Table Settings</h2>
+        <div class="settings-grid">
+          <label>
+            Opponents
+            <select id="opponent-count">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+            </select>
+          </label>
+          <label>
+            Theme
+            <select id="theme-select">
+              <option value="emerald">Emerald (classic)</option>
+              <option value="midnight">Midnight</option>
+              <option value="crimson">Crimson</option>
+            </select>
+          </label>
+          <label>
+            Action delay (ms)
+            <input type="number" id="action-delay" min="200" max="2000" step="100" value="800" />
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="assist-toggle" />
+            <span>Training assistance</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="show-folded" />
+            <span>Reveal folded hands</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="show-all-hands" />
+            <span>Show all hands (learning mode)</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="show-win-odds" />
+            <span>Estimate win odds</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="show-street-help" checked />
+            <span>Show street labels (flop/turn/river)</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="show-position-help" checked />
+            <span>Show position labels &amp; tips</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="fast-forward" />
+            <span>Fast-forward after fold</span>
+          </label>
+          <label>
+            Starting bankroll
+            <input type="number" id="starting-bankroll" min="200" value="1000" />
+          </label>
+          <button id="new-table" class="secondary">New table</button>
         </div>
-        <div>
-          <h3>Betting guidance</h3>
-          <p id="betting-guidance">---</p>
-        </div>
-      </div>
+      </section>
+
+      <section class="panel" id="position-tips" hidden>
+        <h2>Position Tips</h2>
+        <p class="muted">Position rotates each hand along with the blinds. Early positions act first and should play tighter ranges.</p>
+        <ul class="tips-list">
+          <li><strong>UTG/UTG+1:</strong> Tight range, avoid speculative hands.</li>
+          <li><strong>Middle Position:</strong> You can open slightly wider, but stay disciplined.</li>
+          <li><strong>Hijack/Cutoff:</strong> Great for steals and pressure.</li>
+          <li><strong>Button:</strong> Best position for aggression and wide opens.</li>
+          <li><strong>Small/Big Blind:</strong> Defend selectively; you act out of position post-flop.</li>
+        </ul>
+      </section>
     </section>
 
-    <section class="panel" id="log-panel">
-      <h2>Hand Log</h2>
-      <div id="log" class="log"></div>
+    <section class="tab-panel" data-tab-panel="learn">
+      <section class="panel">
+        <h2>Poker Basics</h2>
+        <div class="learn-grid">
+          <div class="learn-card">
+            <h3>Table Positions</h3>
+            <p>Positions rotate each hand. The button acts last post-flop. Blinds are forced bets and act first after the flop.</p>
+          </div>
+          <div class="learn-card">
+            <h3>Betting Streets</h3>
+            <p>Pre-flop → Flop (3 cards) → Turn (1 card) → River (1 card). Each street has a betting round.</p>
+          </div>
+          <div class="learn-card">
+            <h3>Why Position Matters</h3>
+            <p>Acting last gives more information. Wider ranges are strongest from late position.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Hand Rankings</h2>
+        <div class="hand-ranking-grid">
+          <div class="hand-rank">
+            <h4>Royal Flush</h4>
+            <p>10-J-Q-K-A, same suit.</p>
+          </div>
+          <div class="hand-rank">
+            <h4>Straight Flush</h4>
+            <p>Five in sequence, same suit.</p>
+          </div>
+          <div class="hand-rank">
+            <h4>Four of a Kind</h4>
+            <p>Four of the same rank.</p>
+          </div>
+          <div class="hand-rank">
+            <h4>Full House</h4>
+            <p>Three of a kind + a pair.</p>
+          </div>
+          <div class="hand-rank">
+            <h4>Flush</h4>
+            <p>Five cards, same suit.</p>
+          </div>
+          <div class="hand-rank">
+            <h4>Straight</h4>
+            <p>Five in sequence, any suits.</p>
+          </div>
+          <div class="hand-rank">
+            <h4>Three of a Kind</h4>
+            <p>Three of the same rank.</p>
+          </div>
+          <div class="hand-rank">
+            <h4>Two Pair</h4>
+            <p>Two different pairs.</p>
+          </div>
+          <div class="hand-rank">
+            <h4>One Pair</h4>
+            <p>Two of the same rank.</p>
+          </div>
+          <div class="hand-rank">
+            <h4>High Card</h4>
+            <p>Highest card wins.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Starting Hand Strength Guide</h2>
+        <p class="muted">Use this at a glance to understand which hands are strongest. Premium pairs and suited Broadway cards perform best.</p>
+        <div class="hand-chart">
+          <div class="chart-row premium">Premium: AA, KK, QQ, JJ, AKs</div>
+          <div class="chart-row strong">Strong: TT, 99, AQs, AJs, KQs</div>
+          <div class="chart-row playable">Playable: 88-22, suited connectors, suited aces</div>
+          <div class="chart-row speculative">Speculative: suited gappers, broadway offsuit</div>
+        </div>
+      </section>
     </section>
   </main>
 
