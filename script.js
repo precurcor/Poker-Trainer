@@ -242,6 +242,21 @@ function updateHandNumber() {
   elements.handNumber.textContent = state.handNumber;
 }
 
+function phaseLabel(phase) {
+  switch (phase) {
+    case "preflop":
+      return "Pre-flop";
+    case "flop":
+      return "Flop";
+    case "turn":
+      return "Turn";
+    case "river":
+      return "River";
+    default:
+      return "Showdown";
+  }
+}
+
 function dealHands() {
   state.players.forEach((player) => {
     player.hand = [drawCard(), drawCard()];
@@ -295,6 +310,39 @@ function updateActions() {
   elements.raiseAmount.value = state.currentBet + 10;
   elements.continueHand.hidden = true;
   elements.nextHand.hidden = true;
+}
+
+function resetBetsForRound() {
+  state.players.forEach((player) => {
+    player.bet = 0;
+  });
+  state.currentBet = 0;
+  state.pendingRaise = false;
+  state.nextBotIndex = 1;
+}
+
+function advancePhase() {
+  if (state.phase === "preflop") {
+    state.phase = "flop";
+    state.community = [drawCard(), drawCard(), drawCard()];
+  } else if (state.phase === "flop") {
+    state.phase = "turn";
+    state.community.push(drawCard());
+  } else if (state.phase === "turn") {
+    state.phase = "river";
+    state.community.push(drawCard());
+  } else {
+    resolveShowdown();
+    return;
+  }
+
+  resetBetsForRound();
+  updateStatus(`${phaseLabel(state.phase)}: your turn.`);
+  updateActions();
+  renderCommunity();
+  renderPlayers();
+  renderPlayerHand();
+  updateAssist();
 }
 
 function getHandCode(cards) {
@@ -423,9 +471,35 @@ function compareHands(a, b) {
   return 0;
 }
 
+function isBettingRoundComplete() {
+  const activePlayers = state.players.filter((player) => !player.folded);
+  if (activePlayers.length <= 1) {
+    return true;
+  }
+  const maxBet = Math.max(...activePlayers.map((player) => player.bet));
+  return activePlayers.every((player) => player.bet === maxBet);
+}
+
+function completeBettingRound() {
+  if (!isBettingRoundComplete()) {
+    updateStatus("Opponent raised. Your response?");
+    updateActions();
+    return;
+  }
+
+  if (state.phase === "river") {
+    resolveShowdown();
+    return;
+  }
+
+  advancePhase();
+}
+
 function resolveShowdown() {
   state.phase = "showdown";
-  state.community = [drawCard(), drawCard(), drawCard(), drawCard(), drawCard()];
+  while (state.community.length < 5) {
+    state.community.push(drawCard());
+  }
   renderCommunity();
 
   const activePlayers = state.players.filter((player) => !player.folded);
@@ -526,7 +600,7 @@ function runBots({ allowRaise }) {
     return;
   }
 
-  resolveShowdown();
+  completeBettingRound();
 }
 
 function handlePlayerAction(action, amount = 0) {
