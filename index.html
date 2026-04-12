@@ -18,37 +18,17 @@
   </header>
 
   <main>
-    <section class="panel" id="auth-panel">
-      <h2>Profile (optional)</h2>
-      <p class="muted">
-        Sign in to save your bankroll in this browser. Usernames/passwords are stored locally on this device only.
-      </p>
-      <div class="auth-grid">
-        <label>
-          Username
-          <input type="text" id="username" placeholder="cardshark" />
-        </label>
-        <label>
-          Password
-          <input type="password" id="password" placeholder="simple password" />
-        </label>
-        <div class="auth-actions">
-          <button id="sign-in">Sign in / Create</button>
-          <button id="sign-out" class="secondary" disabled>Sign out</button>
-        </div>
-      </div>
-      <div class="auth-status" id="auth-status">Playing as guest.</div>
-    </section>
-
     <section class="panel" id="settings-panel">
       <h2>Table Settings</h2>
+      <p class="muted">Choose fast setup options, or open Advanced Setup to customize every seat.</p>
+
       <div class="settings-grid">
         <label>
-          Opponents
+          Number of opponents
           <select id="opponent-count">
             <option value="1">1</option>
             <option value="2">2</option>
-            <option value="3">3</option>
+            <option value="3" selected>3</option>
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
@@ -57,23 +37,73 @@
             <option value="9">9</option>
           </select>
         </label>
-        <label class="toggle">
-          <input type="checkbox" id="assist-toggle" />
-          <span>Training assistance</span>
+
+        <label>
+          Default starting bankroll
+          <input type="number" id="starting-bankroll" min="100" value="1000" step="50" />
         </label>
+
+        <label>
+          Small blind
+          <input type="number" id="small-blind" min="1" value="5" />
+        </label>
+
+        <label>
+          Big blind
+          <input type="number" id="big-blind" min="2" value="10" />
+        </label>
+
         <label class="toggle">
           <input type="checkbox" id="show-folded" />
           <span>Reveal folded hands</span>
         </label>
+
         <label class="toggle">
-          <input type="checkbox" id="fast-forward" checked />
-          <span>Fast-forward after fold</span>
+          <input type="checkbox" id="assist-toggle" />
+          <span>Training assistance</span>
         </label>
-        <label>
-          Starting bankroll
-          <input type="number" id="starting-bankroll" min="200" value="1000" />
-        </label>
-        <button id="new-table" class="secondary">New table</button>
+      </div>
+
+      <details id="advanced-settings" class="advanced-settings">
+        <summary>Advanced Setup</summary>
+
+        <div class="settings-grid advanced-grid">
+          <label>
+            Your starting bankroll
+            <input type="number" id="player-bankroll" min="100" value="1000" step="50" />
+          </label>
+
+          <label>
+            Chip value (currency per chip)
+            <input type="number" id="chip-value" min="1" value="1" step="1" />
+          </label>
+
+          <label>
+            Default bot style
+            <select id="bot-style-default">
+              <option value="mixed" selected>Mixed table</option>
+              <option value="patient">Patient</option>
+              <option value="aggressive">Aggressive</option>
+              <option value="balanced">Balanced</option>
+              <option value="tricky">Tricky</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="advanced-columns">
+          <div>
+            <h3>Bot bankrolls</h3>
+            <div id="bot-bankroll-settings" class="dynamic-list"></div>
+          </div>
+          <div>
+            <h3>Bot styles</h3>
+            <div id="bot-style-settings" class="dynamic-list"></div>
+          </div>
+        </div>
+      </details>
+
+      <div class="settings-actions">
+        <button id="new-table" class="secondary">Start / Reset table</button>
       </div>
     </section>
 
@@ -96,7 +126,7 @@
             <h3>You</h3>
             <div class="chips">Chips: <span id="player-chips">0</span></div>
           </div>
-          <div class="betting">Current bet: <span id="player-bet">0</span></div>
+          <div class="betting">Street bet: <span id="player-bet">0</span></div>
         </div>
         <div class="hand" id="player-hand"></div>
       </div>
@@ -106,14 +136,14 @@
         <button id="check-call">Check</button>
         <div class="raise-control">
           <input type="number" id="raise-amount" min="0" />
-          <button id="raise">Raise</button>
+          <button id="raise">Raise to</button>
         </div>
         <div class="quick-bets">
+          <button data-bet="min">Min raise</button>
           <button data-bet="half">Half pot</button>
           <button data-bet="pot">Pot</button>
           <button data-bet="allin">All in</button>
         </div>
-        <button id="continue-hand" class="secondary" hidden>Continue hand</button>
         <button id="next-hand" class="secondary" hidden>Next hand</button>
       </div>
     </section>
